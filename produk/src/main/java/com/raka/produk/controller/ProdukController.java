@@ -26,7 +26,7 @@ public class ProdukController {
       return produkService.getAllProduks();
   }
 
-  @GetMapping("/id")
+  @GetMapping("/{id}")
   public ResponseEntity<Produk> getProdukById(@PathVariable Long id){
     Produk produk = produkService.getProdukById(id);
     return produk != null ? ResponseEntity.ok(produk) : ResponseEntity.notFound().build();
