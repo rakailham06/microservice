@@ -1,4 +1,5 @@
-package com.raka.consumer;
+package com.raka.order;
+
 import org.springframework.amqp.core.Queue;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -7,6 +8,6 @@ import org.springframework.context.annotation.Configuration;
 public class RabbitMQConfig {
   @Bean
   public Queue myQueue(){
-    return new Queue("myQueue", false); 
+    return new Queue("myQueue", false);  
   }
 }
