@@ -40,9 +40,7 @@ public class ConsumerService {
             String tanggal = data[6].split("=")[1].replace("'", "");
             String status = data[7].split("=")[1].replace("'", "");
 
-            // ==========================
             // HTML EMAIL
-            // ==========================
             String html =
                 "<div style='font-family:Arial'>" +
 
