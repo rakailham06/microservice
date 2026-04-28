@@ -30,6 +30,7 @@ public class JwtValidator {
             Jwts.parserBuilder().setSigningKey(getSignKey()).build().parseClaimsJws(token);
             return true; 
         } catch (Exception e) {
+            System.out.println("TOKEN DITOLAK KARENA: " + e.getMessage()); 
             return false;
         }
     }

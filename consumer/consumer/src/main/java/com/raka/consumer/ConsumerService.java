@@ -8,7 +8,6 @@ import org.springframework.stereotype.Service;
 
 import jakarta.mail.internet.MimeMessage;
 
-
 @Service
 public class ConsumerService {
 
@@ -17,80 +16,80 @@ public class ConsumerService {
 
     @RabbitListener(queues = "myQueue")
     public void receivedMessage(String text){
-        System.out.println("📩 Received: " + text);
-        sendEmail(text);
+        System.out.println("📩 Pesan diterima dari RabbitMQ: " + text);
+        
+        try {
+            String cleanText = text.replace("Order(", "").replace("Order{", "").replace("}", "").replace(")", "");
+            String[] data = cleanText.split(",");
+            
+            String id = data[0].split("=")[1].trim();
+            String produkId = data[1].split("=")[1].trim();
+            String pelangganId = data[2].split("=")[1].trim();
+            String harga = data[3].split("=")[1].trim();
+            String jumlah = data[4].split("=")[1].trim();
+            String total = data[5].split("=")[1].trim();
+            String tanggal = data[6].split("=")[1].replace("'", "").trim();
+            String status = data[7].split("=")[1].replace("'", "").trim();
+
+            sendEmail(id, produkId, pelangganId, harga, jumlah, total, tanggal, status);
+
+        } catch (Exception e) {
+            System.out.println("Gagal memproses teks pesan. Pastikan format dari Order Service sesuai. Error: " + e.getMessage());
+        }
     }
 
-    public void sendEmail(String text){
+    public void sendEmail(String id, String produkId, String pelangganId, String harga, 
+                          String jumlah, String total, String tanggal, String status){
         try {
             MimeMessage mimeMessage = mailSender.createMimeMessage();
             MimeMessageHelper helper = new MimeMessageHelper(mimeMessage, true);
 
             helper.setFrom("rakailham037@gmail.com");
-            helper.setTo("ervan@pnp.ac.id");
-            helper.setSubject("Order Baru Masuk");
-            text = text.replace("Order{", "").replace("}", "");
-            String[] data = text.split(",");
-            String id = data[0].split("=")[1];
-            String produkId = data[1].split("=")[1];
-            String pelangganId = data[2].split("=")[1];
-            String harga = data[3].split("=")[1];
-            String jumlah = data[4].split("=")[1];
-            String total = data[5].split("=")[1];
-            String tanggal = data[6].split("=")[1].replace("'", "");
-            String status = data[7].split("=")[1].replace("'", "");
+            helper.setTo("raemon@pnp.ac.id");
+            helper.setSubject("Konfirmasi: Order Baru Masuk! (#" + id + ")");
 
             // HTML EMAIL
             String html =
-                "<div style='font-family:Arial'>" +
-
-                    "<h2 style='color:blue'>Anda Telah Order di Raka Store</h2>" +
+                "<div style='font-family:Arial, sans-serif; color:#333;'>" +
+                    "<h2 style='color:#2c3e50; border-bottom: 2px solid #5ce45e; padding-bottom: 10px;'>Anda Telah Order di Raka Store</h2>" +
                     "<p>Berikut rincian order barang yang dipesan:</p>" +
 
-                    "<table style='border-collapse:collapse;width:100%'>" +
-
-                        "<tr style='background:#f2f2f2'>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>ID</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>ID Produk</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>ID Pelanggan</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>Harga</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>Jumlah</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>Total</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>Tanggal</th>" +
-                            "<th style='padding:8px;border:1px solid #5ce45eff;'>Status</th>" +
+                    "<table style='border-collapse:collapse;width:100%; text-align: left;'>" +
+                        "<tr style='background:#f8f9fa; color:#333;'>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>ID Order</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>ID Produk</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>ID Pelanggan</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>Harga</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>Jumlah</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>Total</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>Tanggal</th>" +
+                            "<th style='padding:12px; border:1px solid #ddd;'>Status</th>" +
                         "</tr>" +
-
                         "<tr>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + id + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + produkId + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + pelangganId + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + harga + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + jumlah + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + total + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + tanggal + "</td>" +
-                            "<td style='padding:8px;border:1px solid #ccc;'>" + status + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>" + id + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>" + produkId + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>" + pelangganId + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>Rp " + harga + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>" + jumlah + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd; font-weight:bold;'>Rp " + total + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd;'>" + tanggal + "</td>" +
+                            "<td style='padding:12px; border:1px solid #ddd; color:green; font-weight:bold;'>" + status + "</td>" +
                         "</tr>" +
-
                     "</table>" +
 
                     "<br><br>" +
-                    "<p>Terima kasih sudah order di Raka Store<br>" +
-                    "<br>" +
-                    "Teknik Komputer 2B</p>" +
-
-                    "<br>" +
-                    "<small>2k26 All rights reserved</small>" +
-
+                    "<p>Terima kasih sudah order di Raka Store!<br>" +
+                    "<strong>Teknik Komputer 2B</strong></p>" +
+                    "<hr style='border: none; border-top: 1px solid #eee;' />" +
+                    "<small style='color:#777;'>2026 All rights reserved</small>" +
                 "</div>";
 
             helper.setText(html, true);
-
             mailSender.send(mimeMessage);
-
-            System.out.println("Email tabel berhasil dikirim");
+            System.out.println("✅ Email berisi tabel order berhasil dikirim ke " + helper.getMimeMessage().getAllRecipients()[0]);
 
         } catch (Exception e) {
-            System.out.println("Error email: " + e.getMessage());
+            System.out.println("❌ Error saat mengirim email: " + e.getMessage());
         }
     }
 }

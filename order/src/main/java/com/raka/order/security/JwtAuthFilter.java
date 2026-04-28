@@ -24,14 +24,17 @@ public class JwtAuthFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request, HttpServletResponse response, FilterChain filterChain)
             throws ServletException, IOException {
         
+        System.out.println("➡️ REQUEST MASUK KE FILTER ORDER");
+        
         final String authHeader = request.getHeader("Authorization");
+        
+        System.out.println("➡️ ISI HEADER AUTHORIZATION: " + authHeader);
         
         if (authHeader != null && authHeader.startsWith("Bearer ")) {
             String jwt = authHeader.substring(7);
             
             if (jwtValidator.isTokenValid(jwt)) {
                 String username = jwtValidator.extractUsername(jwt);
-                
                 UsernamePasswordAuthenticationToken authToken = 
                         new UsernamePasswordAuthenticationToken(username, null, new ArrayList<>());
                 SecurityContextHolder.getContext().setAuthentication(authToken);

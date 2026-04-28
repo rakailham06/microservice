@@ -1,15 +1,17 @@
 package com.raka.authorization.service;
 
+import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.stereotype.Service;
+
 import com.raka.authorization.dto.AuthRequest;
 import com.raka.authorization.dto.AuthResponse;
 import com.raka.authorization.model.User;
 import com.raka.authorization.repository.UserRepository;
 import com.raka.authorization.security.JwtService;
+
 import lombok.RequiredArgsConstructor;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
-import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.stereotype.Service;
 
 @Service
 @RequiredArgsConstructor
@@ -35,7 +37,7 @@ public class AuthService {
     }
 
     public AuthResponse login(AuthRequest request) {
-        // Autentikasi ke Spring Security (akan melempar error jika password salah)
+        // Autentikasi ke Spring Security
         authenticationManager.authenticate(
                 new UsernamePasswordAuthenticationToken(
                         request.getUsername(),
