@@ -9,9 +9,9 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.raka</groupId>
-	<artifactId>produk</artifactId>
+	<artifactId>pelanggan</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>produk</name>
+	<name>pelanggan</name>
 	<description>Demo project for Spring Boot</description>
 	<url/>
 	<licenses>
